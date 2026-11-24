@@ -36,7 +36,13 @@ def main() -> None:
     out_dir = Path(os.environ.get("OUTPUT_DIR", "/output"))
     out_dir.mkdir(parents=True, exist_ok=True)
     target = out_dir / "entry.txt"
+    # Write exactly the roast, no trailing newline, so the byte count
+    # stays 163 and the gate sees exactly the judged text.
     target.write_text(ROAST, encoding="utf-8")
+    # Round-trip check: what the grader will read must be exactly ROAST.
+    written = target.read_text(encoding="utf-8")
+    assert written == ROAST, "round-trip mismatch in entry.txt"
+    assert 1 <= len(written) <= 320
     print(f"Wrote {len(ROAST)}-character roast to {target}")
 
 
